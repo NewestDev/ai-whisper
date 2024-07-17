@@ -1,4 +1,4 @@
-# AI Whisper 项目启动指南
+# AI Whisper
 
 ## 项目介绍
 AI Whisper 是一个基于FastAPI和OpenAI Whisper的语音转录服务项目。该项目旨在提供一个高效、易于部署的语音转录API，可以在多种环境中快速实现语音到文本的转换。
@@ -52,4 +52,4 @@ http://127.0.0.1:8000/docs
 如果你有任何问题或者想要联系项目维护者，可以通过以下邮箱与我联系: 
 `AceLin <xoxosos666@gmail.com>`
 
-感谢你对AI Whisper项目的兴趣和支持！
+感谢你对AI Whisper项目的兴趣和支持！欢迎Star⭐⭐
