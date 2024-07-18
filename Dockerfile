@@ -7,7 +7,7 @@ RUN apt-get update && \
     ffmpeg \
     apt-transport-https \
     ca-certificates \
-    build-essential \
+    build-essential
 
 # 设置Poetry环境变量
 ENV POETRY_VENV=/app/.venv
