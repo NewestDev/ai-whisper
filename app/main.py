@@ -1,10 +1,11 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, Query, UploadFile, applications, HTTPException
 from fastapi.responses import JSONResponse, RedirectResponse
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 import whisper
+from whisper import tokenizer
 import torch
 import os
-
+from typing import Annotated, BinaryIO, Union
 from typing import List
 
 # 检查是否有NVIDIA GPU可用
@@ -12,13 +13,17 @@ torch.cuda.is_available()
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 # 加载Whisper模型
-model = whisper.load_model("base", device=DEVICE)
+model = whisper.load_model("small", device=DEVICE)
+LANGUAGE_CODES = sorted(tokenizer.LANGUAGES.keys())
 
 app = FastAPI()
 
 
 @app.post("/whisper/")
-async def handler(files: List[UploadFile] = File(...)):
+async def handler(files: List[UploadFile] = File(...),
+                  language: Union[str, None] = Query(default=None, enum=LANGUAGE_CODES),
+                  ):
+    print('started', language)
     if not files:
         raise HTTPException(status_code=400, detail="No files were provided")
 
@@ -35,13 +40,17 @@ async def handler(files: List[UploadFile] = File(...)):
                 temp_file.write(file.file.read())
                 temp_file.flush()  # 确保所有数据写入磁盘
 
-            # 确保文件在转录前已关闭
-            result = model.transcribe(temp_file_path)
+                # 如果提供了language参数，则使用该语言进行转录，否则让模型自动检浔语言
+            transcribe_language = language if language is not None else None
+
+            # 进行转录
+            result = model.transcribe(temp_file_path, language=transcribe_language)
 
             # 存储该文件的结果对象
             results.append({
                 'filename': file.filename,
                 'transcript': result['text'],
+                'language': result['language'] if transcribe_language is None else language,
             })
 
     # 返回包含结果的JSON响应
