@@ -1,0 +1,22 @@
+version: "3.4"
+
+services:
+  whisper-webservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ASR_MODEL=small
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./app:/app/app
+      - cache-pip:/root/.cache/pip
+      - cache-poetry:/root/.cache/poetry
+      - cache-whisper:/root/.cache/whisper
+
+volumes:
+  cache-pip:
+  cache-poetry:
+  cache-whisper:
+  cache-faster-whisper:
